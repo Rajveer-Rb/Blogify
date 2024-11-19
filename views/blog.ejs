@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('./partials/head') %>
+    <title>Your Blog</title>
+    <style>
+        body {
+            background-color: #DCD9D4;
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.50) 0%, rgba(0, 0, 0, 0.50) 100%), radial-gradient(at 50% 0%, rgba(255, 255, 255, 0.10) 0%, rgba(0, 0, 0, 0.50) 50%);
+            background-blend-mode: soft-light, screen;
+        }
+
+        .commentBox {
+            height: 12vh;
+            width: 100%;
+            border-radius: 7px;
+            color: black;
+            background-color: rgb(239, 239, 239);
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        .CommentProfile {
+            display: flex;
+            gap: 5px;
+        }
+
+        .poppins-light {
+            font-family: "Poppins", serif;
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        .blogBody {
+            background-color: rgb(183, 183, 183);
+            text-align: justify;
+            padding: 10px;
+            font-size: 16px;
+            font: bolder;
+        }
+    </style>
+</head>
+
+<body class="poppins-light">
+    <%- include('./partials/nav') %>
+
+    <div class="container mt-4">
+        <h1><u>
+                <%= blog.title %>
+            </u></h1>
+        <img class="" src="<%= blog.coverImgURL %>" alt="" width="700px">
+        <p class="blogBody mt-5">
+            <%= blog.body %>
+        </p>
+    </div>
+
+    <div class="container mt-3">
+        <img src="<%= blog.createdBy.profileImgUrl %>" alt="" width="100px">
+        <h5>
+            <%= `Creator: ${blog.createdBy.fullname}` %>
+        </h5>
+    </div>
+
+    <div class="container mt-3">
+        <h2>Comments<%= `(${comments.length})` %></h2>
+
+        <% if (locals.user) { %>
+        <form action="/blog/comment/<%= blog._id %>" method="post">
+
+            <div class="mb-3">
+                <input type="text" name="content" id="commentInput" class="commentInput form-control" 
+                    placeholder="Write your comments here....">
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Submit</button>
+        </form>
+        <% } %>
+
+        <div class="commentCont mt-4 mb-3">
+            <% comments.forEach(comment => { %>
+                <div class="commentBox">
+                    <div>
+                        <pre><b><%= comment.content %></b></pre>
+                    </div>
+                    <div class="CommentProfile">
+                        <img height="20px" width="20px" src="../public/uploads/1730915294262-Hollywood_ Then and Now.jpg" alt="">
+                        <pre><%= comment.createdBy.fullname %></pre>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <%- include('./partials/scripts') %>
+
+    <script>
+        // JavaScript to enable/disable the submit button based on input content
+        const commentInput = document.getElementById('commentInput');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Function to check input value and toggle the button's disabled state
+        function toggleSubmitButton() {
+            if (commentInput.value.trim() === "") {
+                submitBtn.disabled = true;  // Disable button if input is empty
+            } else {
+                submitBtn.disabled = false; // Enable button if input has content
+            }
+        }
+
+        // Add event listener to check input changes
+        commentInput.addEventListener('input', toggleSubmitButton);
+
+        // Initial check (in case there's already content in the input field)
+        toggleSubmitButton();
+    </script>
+</body>
+
+</html>
